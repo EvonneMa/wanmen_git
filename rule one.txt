@@ -1,0 +1,1 @@
+If git bash is crashed, just delete the files ending with 'lock'.
