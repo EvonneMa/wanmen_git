@@ -9,7 +9,6 @@ Lesson 10：logistic regression
 		 ln(p/(1-p)) = kx + b
 	  则有
 		 p = exp(kx+b)/(1+exp(kx+b))
-  	  => y = p/exp(kx+b)
 		   = 1/(1+exp(-kx-b)) //最基本的逻辑函数h(x)
 	  这就是逻辑回归模型的来源(当然,参数可以更复杂)
 	3.如同Lesson8说过的,logistic模型常用于二分类,例如：
@@ -20,7 +19,7 @@ Lesson 10：logistic regression
 		   		P = h(x)  if y == 1
 		  	      = 1-h(x)  if y == 0
 		          = yln(h(x))+(1-y)ln(1-h(x))
-		  构造极大似然函数(每个样本出现概率的乘积)
+		  构造极大似然函数(每个样本出现概率的乘积:采用p^y的形式)
 		  取对数,变连乘为求和即得到模型的CF值
 		3)调整参数值,使得模型CF值最小
 		  i)模型CF对每个参数求导,令每个导数都为零,理论上可以求出解析解
