@@ -1,0 +1,8 @@
+第六次课：pandas
+	1.drop(axis)
+	  dropna()
+	  fillna()
+	  fill_value() 	
+	2.rename(dict) //按照字典换个名字
+	  reindex(list) //不是换个名字，而是重新索引
+	3.切片操作对pandas和numpy是一视同仁的，都是返回视图而不是副本

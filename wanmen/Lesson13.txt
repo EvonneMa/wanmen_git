@@ -1,0 +1,28 @@
+第十三次课：复习pandas、学习boost
+	1.pandas元素级应用：
+		Series——map()
+		DateFrame——applymap()
+		groupby——apply()
+		merge(suffixes)、combine_first、concat、take、cut、qcut、any
+		replace、rename
+		pd.MultiIndex.from_arrays()
+		for ele in df.groupby():
+			name = ele[0]
+			data = ele[1]
+		#type(ele) == tuple
+		dict(list(df.groupby()))
+	2.bagging：
+		1)假设有N个样本,则有放回地抽N次,被抽出的不相同样本占总样本的63.2%
+		  防止过拟合、模型更稳定、提高准确率
+		2)通过多次随机抽样构建多个决策树形成随机森林(当然也可以是其他强分类器)
+		  根据少数服从多数的原则进行结果表决
+	  adaboosting：
+	  	1)N个样本,M个模型
+	  	2)计算模型权重(用样本权重表示),并修正样本权重
+	  	3)重复M次,循环修正样本权重,从而增加样本正确预测的概率
+	  	*第t次是对前t-1次留下的残差的近似
+	  	4)取M个模型的加权(模型权重)平均结果作为最终结果		
+	3.Airbnb实战(重点看最后一节的模型)
+	4.zip(a,b,c)——将a、b、c按照对应关系生成元组(其实就是行列互换)
+	  若采用zip(*a),则python将自动把a分解为len(a)个元素,之后按照上述规则进行元组生成
+	  具体原理见第四次课(*的用法)

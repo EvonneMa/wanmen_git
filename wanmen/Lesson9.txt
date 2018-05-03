@@ -1,0 +1,45 @@
+第九次课：线性回归
+	1.为什么使用线性回归
+		线性回归形式简单,应用广泛,而且能反映出因果性(不只是相关性)
+	2.如何计算线性回归——最小二乘估计:
+		1)x,y是观测值,y'是回归值,y=ax+b,y'=a'x+b'
+		2)样本的回归是对总体的回归的估计
+		3)单个点的拟合程度用残差来衡量,整体的拟合程度用残差平方和SSE衡量
+		  选择SSE最小的(a,b)组合即为普通最小二乘法
+		*试推导a和b的表达式
+	3.回归分析的意义:
+		估计总体的x、y之间的关系,确定相关性,对原始数据进行解释
+	4.参数估计分析:
+		1)样本回归参数是对总体回归参数的估计
+		2)多次采样可计算出多组参数(以β为例),相当于对β'进行了多次抽样
+		*试计算β的均值和方差(提示:xi视作常数)
+		 此时可以通过构造t统计量对β'进行假设检验来初步评价模型是否合理
+		*例如,通常作原假设H0:β=0来对斜率的正负进行检验。
+		*如果检验的结果是接受H0,说明β并不能显著区别于0,因而β的正负性不确定,回归效果较差
+		3)采用R^2对模型整体进行评价
+	5.应用线性回归的假设条件:
+		1)y的均值是x的线性组合
+		2)残差e独立于样本
+		3)给定样本,e要服从正态分布
+		4)对于不同的样本,e的方差应相同
+	6.置信区间、预测区间:
+		公式很长,主要参数为:
+			——样本容量n
+			——y的均方误差
+			——x的均方误差
+			——y的预测值
+			——指定自由度和显著性水平的t统计量的值
+	7.python实现:
+		//sklearn package
+			from sklearn.linear_model import LinearRegression
+			x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.3,rendom_state = 1) //分离数据集
+			lr = LinearRegression() //定义一个线性回归
+			lr.fit(x_train,y_train) //对x,y进行最小二乘拟合(fit函数)
+			y' = lr.predict(x_test)	//进行数据预测(predict)
+			intercept = lr.intercept_ //截距
+			slope = lr.coef_ //斜率
+		//statsmodels package
+			import statsmodels.api as sma
+			x = sma.add_constant(x) //为模型添加常数项,否则直线过原点
+			model = sm.OLS(y,x).fit() //x,y可以使用Dataframe类型
+			model.summary()

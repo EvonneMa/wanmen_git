@@ -1,0 +1,29 @@
+第三次课：python基础之数据类型（字符串与数组）
+	1.solid原则
+	2.学习一些前端语言：Javascript
+	3.物联网：
+			硬件语言：c/c++(如各种传感器)
+	  	后台语言：python/Java
+	  	人工智能：python/c++
+	  
+	  数据分析：
+	  	excel/sql
+	  	R(咨询公司)/Python(互联网)/SAS(大型国有企业应用)
+	  	matlab
+	  
+	  核心不在于语言，在于语言背后的东西（算法）
+	4.数组：
+		arr[k1:k2:k3] //k1表示开始索引，k2表示结束索引（不包含），k3表示取值间隔
+									//k1不能大于k2，否则返回空字符串
+									//负数表示从后往前
+		arr[::-1]			返回arr的倒序（如arr=[1,2,3],则返回[3,2,1]）
+	5.字符串相关函数：
+		s.split(//maxsplit)	 //按照指定分隔符对s进行分割
+		s.join()			//将s作为连接符进行连接
+		s.replace(str1,str2) //将s中的str1替换为str2
+		s.startswith(str)		 //
+		s.endswith(str)			 //
+		s.find(str)					 //返回str在s中第一次出现的位置
+		python官网上可以查看doc来学习函数（贼多）
+		格式化输出(python3.6):
+			f' ... {} ... '		 //使用{}来代替%，并且可以使用{name}来指定填入此处的内容

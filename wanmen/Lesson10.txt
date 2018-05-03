@@ -1,0 +1,44 @@
+Lesson 10：logistic regression	
+	1.不是回归的回归:逻辑回归常用于分类问题
+	2.设0<p<1,则有
+		 0<p/(1-p)<∞
+	  从而
+		 -∞<ln(p/(1-p))<+∞
+	  *这是一种常见的区间转换,历史悠久,被称为odds转换,最初来自于赌博
+      令
+		 ln(p/(1-p)) = kx + b
+	  则有
+		 p = exp(kx+b)/(1+exp(kx+b))
+  	  => y = p/exp(kx+b)
+		   = 1/(1+exp(-kx-b)) //最基本的逻辑函数h(x)
+	  这就是逻辑回归模型的来源(当然,参数可以更复杂)
+	3.如同Lesson8说过的,logistic模型常用于二分类,例如：
+		根据信用值来预测恶意订房
+	4.模型评价Cost Function
+		1)由于logistic并不是真正的将连续值映射成为离散值,故不宜采用F1_score评价体系
+		2)极大似然法：选取参数使得样本出现的概率最大
+		   		P = h(x)  if y == 1
+		  	      = 1-h(x)  if y == 0
+		          = yln(h(x))+(1-y)ln(1-h(x))
+		  构造极大似然函数(每个样本出现概率的乘积)
+		  取对数,变连乘为求和即得到模型的CF值
+		3)调整参数值,使得模型CF值最小
+		  i)模型CF对每个参数求导,令每个导数都为零,理论上可以求出解析解
+		  ii)但实际上很难得到,故一般都采用梯度下降法、牛顿法等近似逼近理论值
+	5.python实现:
+		from sklearn.linear_model import LogisticRegression
+		lr = LogisticRegression()
+		lr.fit(x_train,y_train) //梯度下降法和牛顿法等数值方法需要自编程
+		y_pre = lr.predict_proba(x_test)
+	6.softmax：
+		h(x)能够实现二分类,对于多分类,引入函数
+			gi(x) = e^(ai0+ai1*x1+ai2*x2+...)
+		表示样本属于第i类的程度,则有
+			softmax = gi(x)/Σ(gi(x))
+		表示样本属于第i类的概率
+	7.h'(θ) = h(θ)*(1-h(θ))*x
+	  sm'(θ) = sm*(1-sm)*x	i == j
+	         = sm*sm*x      i != j
+		  
+		  
+		  

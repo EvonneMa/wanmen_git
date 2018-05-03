@@ -1,0 +1,11 @@
+第一次课
+1.安装anaconda，学习使用jupyter notebook.虽然很强大，但是我觉得ipython就足够用了，而且使用命令行总感觉很牛逼，所以就没有安装
+2.相关命令：
+		conda create --name env_name python = x.x  //安装指定版本的python
+		active env_name  //激活该版本
+		conda ipykernel blablablabla  //用于将新安装的python版本更新到jupyter notebook上
+3.安装graphviz
+		1.先在官网上下载graphviz
+		2.再使用pip install graphviz
+		//该工具用于生成可视化的决策树
+4.安装tensorflow、keras等等

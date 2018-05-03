@@ -1,0 +1,12 @@
+第七次课：matplotlib
+	1.n,bins,patches = plt.hist(data,group_number,facecolor,alpha) 
+	  #每个分组的元素个数,分组区间,分组在图中对应的图形=(数据,分组数,颜色,透明度)
+	2.plt.scatter(x,y,s,c,alpha) #(x坐标,y坐标,散点面积,颜色,透明度)
+	3.plt.pie(sizes,explode,labels,autopct,shadow,startangle)
+	  #(每一块占的比例,突出显示程度,标签,自动计算百分比,阴影效果,开始的角度)
+	  #注意：1.以水平向右的方向为0°,默认逆时针排列
+			 2.比例之和可以不是100%,python会自动调整
+    4.plt.plot()
+      plt.subplot(num) 
+      fig,arr = plt.subplots(m,n)
+    5.Radar、3D、imread()

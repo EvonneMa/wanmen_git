@@ -1,0 +1,75 @@
+第十一次课：拟合与过拟合、模型评价(交叉验证)
+	1.拟合——寻找主要矛盾,用于预测
+	  	模型太过简单会导致欠拟合,使得模型与最佳模型之间产生较大误差,称为bias
+	  	模型太过复杂会是模型的适用性大大降低,在预测新数据时产生较大误差,称为variance
+	2.模型检验方法——交叉检验
+	  	将样本分为k份,每次拿出一份作为测试集,重复k次,取平均值
+	3.对最小二乘模型的改进——正则化,对抗过拟合
+	  	对参数进行相应的限制(想象一个椭圆和一个圆/方形)
+	      i)L2 norm:Ridge
+	    	Σβ^2 <= t //使得权重尽可能接近于零,增强模型对共线性的鲁棒性
+	    			  //随着t的缩小,切点很难切在坐标轴上,但是会越来越靠近原点
+	      ii)L1 norm:Lasso
+	    	Σ||β|| <= t //使得权重大部分都变成零,用于降低模型复杂度
+	      				//随着t的缩小,交点很容易交在坐标轴上,使得某个系数变为零
+	      iii)elastic net
+	    	就是把Ridge和Lasso结合起来
+	  	*在实际应用当中,是通过 "新罚函数 = 原罚函数 + 正则项" 的方式来实现的
+	  	 即拉格朗日乘子法
+	4.python实现(Cross_Validation、Ridge和Lasso):
+		from sklearn.model_selection import KFold
+		kf = KFold(n,shuffle = True) //将数据集分为n类
+		kf.get_n_splits(data) 
+		result = kf.split(data) //这两句必须一起用
+		#Cross_Validation
+		from sklearn.model.selection import cross_val_score
+		ans = cross_val_score(模型名name,X,y,scoring = 'accuracy',分类数n)
+		#Ridge
+		from sklearn.linear_model import Ridge
+		rm = Ridge(alpha = 0.0001)
+		rm.fit(X,y)
+		rm.predict(x_test)
+		#Lasso
+		from sklearn.linear_model import Lasso
+		lm = Lasso(alpha = 0.0001)
+		lm.fit(X,y)
+		lm.predict(x_test)
+	5.pipeline：
+		from sklearn.pipeline import make_pipeline,Pipeline
+		pipe_lr = Pipeline([('sc', StandardScaler()),
+                    ('pca', PCA(n_components=2)),
+                    ('clf', LogisticRegression(random_state=1))
+                    ])
+        pipe_lr.set_params(sc__para,pca__para,clf__para)
+        pipe_lr.fit(X,y)
+        #Pipeline对象接受二元tuple构成的list
+        #在每一个二元 tuple 中：
+         第一个元素为 arbitrary identifier string(就是个别名,方便引用)
+         我们用以获取(access)Pipeline object 中的 individual elements
+         使用 第一个元素 + 双下划线 + 参数名 的方式来为相应参数赋值
+         第二个元素是 scikit-learn 中与之相适配的transformer 或者 estimator
+        #Pipeline 的中间过程由scikit-learn相适配的转换器(transformer)构成
+         最后一步是一个estimator
+        #比如上述的代码：
+         StandardScaler和PCA作为transformer 构成intermediate steps
+         LogisticRegression 作为最终的estimator
+        #当我们执行 pipe_lr.fit(X_train, y_train)时：
+         首先由StandardScaler在训练集上执行 fit和transform方法
+         transformed后的数据又被传递给Pipeline对象的下一步,也即PCA()
+         和StandardScaler一样,PCA也是执行fit和transform方法
+         最终将转换后的数据传递给 LogisticRegression
+         LogisticRegression 调用fit方法完成模型生成与训练
+	6.方差的分解：Bias、Variance
+		Bias^2——多次采样后样本预测均值关于观测均值的波动
+				衡量模型整体的偏移,刻画了模型本身的拟合能力
+				均值<=>真实值
+		Variance——每次采样的样本预测值关于多次采样后样本预测均值的波动
+				  衡量模型本身的鲁棒性,刻画了数据扰动造成的影响
+				  样本<=>均值
+		noise——观测值关于观测均值的波动,刻画了学习问题的难度
+	7.常用的优化算法(求最优值):
+	  	梯度下降法、坐标下降法、牛顿法、最小角度法等等
+==================================================================
+	  *一定要注意区分模型和算法~~~
+==================================================================
+	

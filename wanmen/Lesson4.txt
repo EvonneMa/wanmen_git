@@ -1,0 +1,49 @@
+第四次课：python基础之函数、循环
+	1.安装jupyter
+	2.func(para1,para2 = default_value)	//定义函数的时候可以直接在参数列表中给出默认值
+		func(*args)		//type(args) ==> tuple 
+						//可以传任意(>=0)个参数给args,python自动将这些变量打包成tuple
+						//如果直接以(*a)的方式进行传递,python也将首先将其(a)转换为tuple
+		func(**args)  //type(args) ==> dict
+					  //传入参数(0个或多个)必须具有 'key = value' 的形式
+  3.操作系统和计算机网络
+  4.def print_if_true(args):
+  		'''
+  		introduction to this file/func/method/package...
+  		//说明文档，养成好习惯，以'''或"""标注，放在相应代码块的最前面
+  		//即：在所有可执行语句之前
+  		'''
+  		executable codes
+  5.lambda://匿名函数
+  		lambda args:codes,values
+  6.Exception://异常处理
+   		try:
+   			codes
+   		except Exception as e:
+   			codes
+  7.for/while也可以和else配合
+  8.decorator://修饰器
+  	def decorator_para(args):	//传递修饰器所需参数
+  		def decorator_func(func): //传递被修饰函数
+  			def decorated_func(args_func): //传递被修饰函数参数列表
+  				executable code //修饰代码
+  		  return decorated_func //返回修饰好的函数
+  		return decorator_func //逐层返回，没有别的功能(逐层返回指向待返回函数的指针)
+  	@decorator_para(args) //用于在执行func前后另外执行一些代码，形成“修饰”效果	  
+  	def func(args):
+  		executable code
+  	def main():
+  		func(args) //此时，func将会指向修饰器返回的函数
+  9.import module  //对应一个.py文件
+  		   package //对应一个文件夹，里面可以包含子文件夹和文件
+  		   		   //python3.3之前必须包含文件__init__.py才能被认为是package
+  10.在python中，定义一个类方法
+     class className():
+     	def class_func1():
+     		//该方法被认为是类方法，只能通过 类名. 的方式调用
+     	def class_func2(self):
+     		//加入self后，该方法只能通过 对象名. 的方式调用
+     		//self可以用任意合法变量名代替，起占位作用
+     __repr__(): 控制输入类名后返回的内容
+     __str__():  控制print(类名)输出的内容，类似java的toString()
+  		   					
