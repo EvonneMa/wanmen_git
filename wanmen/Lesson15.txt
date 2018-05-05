@@ -89,3 +89,10 @@
 		5.优点——核函数把问题变线性
 				支持向量使样本量大大减小
 		  缺点——不适合大数据
+	11.python代码
+		from sklearn.svc import SVC,SVR
+		clf_svc = SVC()
+		clf_svr = SVR()
+		#主要参数——C,kernel,decision_function_shape等
+		clf.fit()
+		clf.predict()
