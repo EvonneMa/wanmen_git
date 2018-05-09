@@ -1,0 +1,32 @@
+第十七次课：文字处理与Amazon评论NLP分析案例
+	1.python文字处理
+		\ r len + .lower() .upper() .strip() .isalpha() .isdigit(整数) .isspace()
+		.startswith(str) .endswith(str) in .find(str) .replace(str_res,str_des)
+		.split(常用re) str1.join(str//用str1连接str) with_open_as_f
+	2.ASC||、unicode解码与编码
+		32-47	符号
+		48-57	0~9
+		65-90	小写字母
+		97-122	大写字母
+		chr(i)	将数字i转换成对应的字符
+		ord(s)	将字符s转换成对应的ASC||码		
+		进制转换 int、hex、bin
+		unicode 字符库,u'我'表示采用Unicode字符库的相应序号来表示'我'
+		utf-8	编码方式
+				采用encode('utf-8')进行编码,返回Unicode字符库的相应序号
+				采用decode('utf-8')进行解码,返回原始文本
+	3.nltk简介
+		text.concordance('week')//找出week在text中每一次出现时的上下文
+		text.dispersion_plot('week')//绘制week在文中分布(横坐标为单词序列)
+		text.count('week')//统计week在text中出现的次数
+		例子:特朗普就职演说文本处理
+		1)read file
+		2)tokens = nltk.word_tokenize(context)
+		  text = nltk.Text(tokens)//将tokens制作成nltk的文本集,从而可以调用nltk的函数
+		  text.dispersion_plot(words)//绘制word的分布图
+		  text.collocations()//查找频率较高的长度为2的短语
+		  text_fq = nltk.FreqDist(text)//统计每个单词出现的频数,由高到低排列
+		  text_fq.most_common(num)//返回频率最高的前num个词汇
+		  set(text)//将text(或任一list)转换成无重复元素的集合,len(set)计算集合元素个数~
+	4.Amazon评论分析
+		  		  
