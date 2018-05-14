@@ -1,0 +1,29 @@
+第十九次课：网络爬虫基础(针对HTML进行信息爬取)
+	1.response = requests.get(url，headers,data,proxies)
+		headers = {'User-Agent':user_agent}假装自己是个正常用户,不是来爬虫的
+			user_agent = "Mozilla/5.0(Windows NT 10.0;Win64;x64)**"
+		data = {'text':'today'}
+		proxies = {"http":"http://10.10.1.10:3128","https://10.10.1.10:1080"}//设置代理
+	  response.status_code查看响应状态
+	  response.encoding = 'UTF-8'设置编码形式
+	  response.text查看内容
+	2.反爬虫常常会设置一些Error,因此需要try-catch以便于捕获异常
+	  requests.get(url,timeout = 0.001)超时异常
+	3.网页解析器
+		lxml(常用一点)
+		html5lib
+	4.beautifulsoup
+		from bs4 import BeautifulSoup as bs
+		soup = bs(response.text,'lxml')#response.text为get(url)返回的响应内容
+		soup.prettify()#自动缩进对齐
+		<tag attr = value...>text</tag>
+		soup.标签名[属性名]——返回属性值
+		*soup.标签名.string——返回该标签下的文本内容
+		*soup.strings——返回所有文本内容
+		soup.标签名.contents(children)——返回该标签下所有的子节点list(包括子标签和换行符)
+		soup.标签名.parent——返回该标签的父节点
+		#使用.name可以只显示标签名而不显示所有内容
+		*soup.find_all('tag')——返回由所有标签a组成的list
+		*soup.find_all(attr = value)——定向寻找标签list(下划线避免与关键字冲突)
+		*soup.find_all(text=re.compile('str'))——搜索文本list
+		
