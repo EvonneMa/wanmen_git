@@ -24,6 +24,6 @@
 		soup.标签名.parent——返回该标签的父节点
 		#使用.name可以只显示标签名而不显示所有内容
 		*soup.find_all('tag')——返回由所有标签a组成的list
-		*soup.find_all(attr = value)——定向寻找标签(下划线避免与关键字冲突)
-		*soup.find_all(text=re.compile('str'))——搜索文本
+		*soup.find_all(attr = value)——定向寻找标签list(下划线避免与关键字冲突)
+		*soup.find_all(text=re.compile('str'))——搜索文本list
 		
