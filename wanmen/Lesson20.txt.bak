@@ -1,0 +1,42 @@
+第二十次课：爬虫进阶与正则表达式
+	1.当文件较大时,考虑分片读取或写入:
+		offset = 0
+		chunk = 100
+		while offset < size:
+			f.write(text[offset:offset+chunk])
+			offset += chunk
+		f.close()
+	2.常见文件操作
+		os.path.exists('name')
+		os.rename(old_name,new_name)
+		os.listdir('.')#显示当前路径下的所有文件
+		os.remove(name)
+		os.rmdir(name)#删除文件夹
+		os.chdir('路径')#相当于命令行中的cd
+		import glob
+		glob.glob(name)#查找文件
+		通配符:* 	——零个或多个字符
+			   ？	——一个字符
+			   [abc]——匹配a、b或c
+			   [!a] ——不匹配a
+	3.静态文件获取
+		from urllib.parse import urlparse
+		new_header = {
+			"Referer" = ""
+			"User-Agent":""
+		}#反爬虫
+		url = ""
+		content = urlparse(url)#返回的是一个元组,包含大约6个元素
+		文件名,扩展名 = os.path.splitext(content.path)
+		#获取视频等非文本数据
+		r = requests.get(url,header,stream=True)
+        r.raise_for_status()
+        with open(local_filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
+	4.认证授权
+		cookie based
+		tokend-based
+		
