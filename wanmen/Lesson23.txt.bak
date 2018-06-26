@@ -1,0 +1,8 @@
+第23次课：用户信息获取
+	1.内存运算会影响算法的实际时间,尽管时间复杂度相同
+	2.requests.post(url,timeout = 10)
+		timeout用于防止网站连接中断报错,当超过timeout时返回一个异常
+		要善于使用try except和timeout等相关参数
+		使用高度匿名代理
+		每分钟爬取的数据量和访问次数都有可能引起反爬虫机制
+	3.requests.post()和requests.get()之间的区别
