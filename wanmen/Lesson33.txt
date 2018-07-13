@@ -1,0 +1,197 @@
+第三十三次课	OpenCV
+	import matplotlib.image as mpimg
+	import matplotlib.pyplot as plt
+	import cv2
+	import numpy as np
+	1.image = mpimg.imread(filename)
+	  gray_image = cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
+	  	*显示灰度图像
+	  hsv = cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
+	  	*色调、饱和度、明度
+	  plt.imshow(gray_image,cmap = 'gray') #plt.matshow()效果相同
+	  	*默认情况下cmap显示彩色图像,故不需指定参数
+	  	*灰度矩阵是2D的,而彩色图像是3D的(即多了一维RGB)
+	  mask = cv2.inRange(image,lower,upper) 
+	  	*选出介于lower和upper之间的像素点,upper和lower的选取需要图形知识
+	  	*image中满足筛选条件的像素点被记为1
+	2.image = cv2.imread(filename,1/0/-1)
+		*分别代表彩色、灰度、透明度
+	  	*注意:mpimg.imread()和cv2.imread()读取的RGB恰好相反——前者是RGB,后者是BGR
+	  	*使用cv2.cvtColor(image,cv2.COLOR_BGR2RGB)即可
+	  cv2.namedWindow("image",cv2.WINDOW_NORMAL)
+	  	*定义窗口用于显示图片
+	  cv2.imshow('image',image)
+	  	*注意:此时也会按照BGR的顺序进行画图
+	  res = cv2.waitKey(0) # cv2.waitKey(n ms)
+	  	*显示一帧画面,等待用户输入,一般可以利用返回值res进行视频、图片处理流程控制
+	  cv2.destroyAllWindows()
+	  	*关闭窗口
+	  cv2.imwrite(filename,image)
+	  	*注意:此时也会按照BGR的顺序进行输出
+	3.cv2.line(img,pt1,pt2,color,thickness)
+	  	*在图像img上画一条直线,起始点pt1,终点pt2,颜色color,线的宽度thickness
+	  cv2.rectangle(img,pt1,pt2,color,thickness)
+	  	*pt1为左上角的点,pt2为右下角的点
+	  cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
+	  	*text为文字内容,org为文字左上角坐标,fontFace为字体,fontScale为大小
+	4.np.item(pos)、np.itemset(pos,value)
+		*image本身就是一个ndarray
+	  b,g,r = cv2.split(image)
+	  	*将图像数据分为B、G、R三个通道,尽量少用(直接image[:,:,0/1/2]就行)
+	  img_merge = cv2.merge((b,g,r))
+	  	*将三通道分开的数据合并,注意要以元组的形式
+	5.padding——图像填充,卷积操作必备
+		*通常用在CNN中,当需要扩大图片尺寸时未知区域如何填充(cv2.copyMakeBorder())
+	6.图像运算
+	  a.加法:
+	  	x = np.uint8([250])
+	  	y = np.uint8([10])
+	  	cv2.add(x,y)------>255 # 250 + 10 = 260 > 255,按照饱和运算取极限255
+	  	x + y		------>4   # 250 + 10 = 260 % 255 = 4(注意这里不是5)
+	  b.混合(加权求和)
+	  	image = cv2.addWeighted(image1,a,image2,1-a,0)
+	  		*image = a*image1+(1-a)*image2+0
+	  c.逻辑运算(结合mask可用于抠图、合并图像等)
+	    cv2.bitwise_and
+			*逻辑运算的参数为src1,src2,mask
+			*其运算法则为:temp = src1 & src2
+			*mask的作用为:mask元素为0,则temp对应元素也为0
+		cv2.bitwise_or
+		cv2.bitwise_not
+		cv2.bitwise_xor
+	  d.颜色空间转换(生成mask)
+	  	通常HSV更适合进行图像跟踪
+	  	i.固定阈值
+	  	  ret,mask = cv2.threshold(src = image,thresh = xx,maxval = xx,type = cv2.THRESH_BINARY)
+	  		*type表示按位比较,大于threshold取值maxval,小于的设为0
+	  		*type有以下几种:
+	  			cv2.THRESH_BINARY		简单二值
+	  			cv2.THRESH_BINARY_INV	反向二值
+	  			cv2.THRESH_TRUNC		截断阈值,即超过阈值则以阈值代替
+	  			cv2.THRESH_TOZERO		超过阈值以0代替
+	  			cv2.THRESH_TOZERO_INV	低于阈值以0代替
+	  	ii.自适应阈值
+	  	  mask = cv2.adaptiveThreshold(src, maxval, thresh_type, type, Block Size, C)
+	  	  	*thresh_type阈值设定方式:
+	  	  		cv2.ADAPTIVE_THRESH_MEAN_C		平均值法
+	  	  		cv2.ADAPTIVE_THRESH_GAUSSIAN_C	高斯平均法(相当于按距离加权平均)
+	  	  	*Block Size	分块大小(对每一块都计算各自的阈值,故称为自适应)
+	  	  	*C	阈值计算中的常数项(阈值 = 平均值 - C)
+	  e.几何变换
+	  	i.缩放:
+	  	  cv2.resize(img,new_width,new_height,interpolation=cv2.INTER_LINEAR)
+	  		*cv2.INTER_NN - 最近邻插值,
+			 cv2.INTER_LINEAR - 双线性插值 (缺省使用)
+			 cv2.INTER_AREA - 使用象素关系重采样。在缩小图像时，推荐使用
+			 cv2.INTER_CUBIC - 立方插值
+			*new_width和new_height均为整数
+		ii.平移:
+		  构造平移矩阵 M=[[1,0,tx],[0,1,ty]]使得(x,y)--->(x+tx,y+ty)
+		  res = cv2.warpAffine(img,M,(cols,rows))
+		  	*	  img		  	原图像
+		  	 	   M		 	平移矩阵
+		  	 (width,height)		原图像尺寸
+		  	 	  cols			列数目(img.shape[1])
+		  	 	  rows			行数目(img.shape[0])
+		iii.旋转:
+		  M = cv2.getRotationMatrix2D(center = (cols,rows), angle = 45, scale =  1.5)
+		  	*angle单位为度,默认逆时针
+		  	 scale为缩放程度
+		  res = cv2.wrapAffine(img,M,(cols,rows))
+		  	*最后还是借助平移函数来完成
+		iv.视角变换(放大指定区域):
+		  M = cv2.getPerspectiveTransform(src = pts1,dst = pts2)
+		  	*指定原始点集在原始图上的坐标pts1,和目标点集在新图上的坐标pts2
+		  res = cv2.warpPerspective(src = img, M = M, dsize = (250,250))
+		  	*dsize指定新图的大小
+	  f.图像平滑(LPF)——一般借助CNN
+	  	i.低通滤波LPF用于去噪、模糊图像
+		ii.卷积滤波
+		  res = cv2.filter2D(src = img,ddepth = -1, kernel = kernel)
+		  	*kernel卷积核
+		  	*CNN的做法是:让机器去学习出一个核函数而不是人工定义一个
+		iii.平均滤波
+		  res = cv2.blur(img,(n,n))
+		  	*平均滤波也即模糊
+		  	*n 卷积核的尺寸
+		iv.高斯滤波
+		  res = cv2.GaussianBlur(src = img, ksize = (5,5), sigmaX = 2)
+		  	*ksize 高斯核的宽和高(必须是奇数)
+		  	*sigmaX、sigmaY 高斯函数沿X,Y方向的标准差
+		  					如果我们只指定了X方向的标准差,Y方向也会取相同值
+		  					如果两个标准差都是0.那么函数会根据核函数的大小自己计算
+		  	*高斯滤波可以有效的从图像中去除高斯噪音
+		v.中值滤波
+		  res = cv2.medianBlur(img, 3)
+		  	*中值滤波是一种非线性滤波器
+		  	*它是取邻域内各点的统计中值作为输出
+		  	*这种滤波器可以有效的去除椒盐噪声
+		  	*能保持图像中各物体的边界不被模糊掉
+		  	*只能使用正方形的邻域
+		vi.双边滤波
+		  cv2.bilateralFilter(src, d, sigmaColor, sigmaSpace)
+		  	*d: 邻域直径，
+			*sigmaSpace: 空间高斯函数标准差
+			*sigmaColor: 灰度值相似性高斯函数标准差 
+			*在高斯模糊的基础上加了一个值域限制
+			 两个像素的像素值相差太大就不进行模糊
+			*双边滤波同时使用空间高斯权重和灰度值相似性高斯权重
+			 空间高斯函数确保只有邻近区的像素对中心点有影响
+			 灰度值相似性高斯函数确保只有与中心像素灰度值相近的才会被用来做模糊运算
+			*能保证边界不会被模糊
+			*双边滤波器能够有效的将影像上的噪声去除,同时保存影像上的边缘资讯
+	  g.形态学变化(针对黑白图)
+	  	i.腐蚀
+	  	  erosion = cv2.erode(img, kernel, iterations = iterations)
+	  	  	卷积核沿着图像滑动
+	  	  	如果与卷积核对应的原图像的所有像素值都是1(相当于是&操作)
+	  	  	那么中心元素就保持原来的像素值
+	  	  	否则就变为零
+	  	  =>很显然,随着iterations的增加,白色区域会越来越小,就像被腐蚀一样
+	  	ii.膨胀
+	  	  dilation = cv2.dilate(img, kernel, iterations = iterations)
+	  		毫无疑问,将&改为|即可
+	  	iii.开运算=>先腐蚀再膨胀=>剔除小团块物体,防止过分物体过分联结
+	  		闭运算=>先膨胀再腐蚀=>填补物体间的黑洞,保留联结关系
+	  		TOP HAT/BLACK HAT/Gradian
+	  	iv.cv2.getStructuringElement(type,(n,n))
+	  		*生成指定形式的n阶核
+	  		*type包括
+	  			cv2.MORPH_RECT
+	  			cv2.MORPH_ELLIPSE
+	  			cv2.MORPH_CROSS
+	  h.图像梯度(HPF)
+	  	i.高通滤波HPF用于寻找图像边缘
+	  	laplacian = cv2.Laplacian(src = img, ddepth = -1, ksize = 5)
+		sobelx = cv2.Sobel(src = img, ddepth = -1, dx = 1, dy = 0, ksize = 5)
+		sobely = cv2.Sobel(src = img, ddepth = -1, dx = 0, dy = 1, ksize = 5)
+	  	ii.Sobel和Scharr是求一阶或二阶导数
+	  	   Scharr是对Sobel（使用小的卷积核求解梯度角度时）的优化
+	  	   Laplacian是求二阶导数
+	  	iii.索贝尔算子是图像处理中的算子之一,主要用作边缘检测
+	  		是离散性差分算子,用来计算图像亮度函数的梯度之近似值
+	  		在图像的任何一点使用此算子,将会产生对应的梯度矢量或是其法矢量
+	  		*Sobel算子在np.uint8下会将负斜率自动变为0导致丢失数据
+	  		 因此我们可以先按照cv2.CV_64F或cv2.CV_16S来进行Sobel变换
+	  		 之后取绝对值np.absoute(),再转化为np.uint8()
+	  	iv.当内核大小为3时，Scharr算子会使得梯度计算结果更为精确
+	  	v.基于Laplace变换的图像增强已成为图像锐化处理的基本工具
+	  i.傅里叶变换
+	  	  *通常如果数组大小是2的指数，或者是2’s, 3’s, and 5’s的乘积时候，傅立叶变换计算效率会更高
+    	  *通过cv2.getOptimalDFTSize来取得最优数组大小，然后进行padding
+    	  nrows, ncols = cv2.getOptimalDFTSize(rows),cv2.getOptimalDFTSize(cols)
+    	  frame = cv2.copyMakeBorder(img, 0, ncols - cols, 0, nrows - rows, cv2.BORDER_CONSTANT, value = 0)
+    	  *通过np的fft.fft2进行2维度的fft， 并将图像原移动到中心点
+     	  img_dft = np.fft.fft2(frame)
+    	  img_dft = np.fft.fftshift(img_dft)
+      j.边缘检测
+      	cv2.Canny(image,minval,maxval)
+      		*原理如下
+      			i.先进行一次高斯过滤
+      			ii.分别在x,y方向上进行一次Sobel高通过滤,得到每个点的梯度向量
+      			iii.判断每个点是否是所在区域内沿该店梯度方向的局部最大值
+      				如果是——进行下一步,否则——置为0
+      			iv.如果像素点>maxval => 是边界sure-edge
+      			   如果像素点<minval => 不是边界non-edge
+      			   如果像素点介于两个阈值之间:
+      			   	如果该点和sure-edge相连,则归为sure-edge;否则归为non-edge

@@ -1,0 +1,84 @@
+第三十七次课	神经网络
+	1.input + wight + active_function
+	2.前馈神经网络
+		y = f(w1*x1+w2*x2)
+	  深度神经网络——隐藏层个数>=2
+	  反向传播算法BP——从y向x求偏导
+	3.激活函数
+		Linear
+			  y = x
+		Softmax/Sigmoid(梯度消失/爆炸问题)
+			  y = 1/(1+exp(-W.T*x))
+		Relu
+			  y = max(0,x)
+		LeakyRelu
+			  y = max(x,kx),式中 k < 1
+		PRelu
+		Selu(输入为Gaussian分布时输出也服从Gaussian分布	)
+			 	  λ*x 				x > 0 
+			  y =
+				  λ*(α*exp(x)-α)))	x <= 0
+				式中：α = 1.6732632,λ = 1.050700987	
+		Tanh
+			  y = (exp(x)-exp(-x))/(exp(x)+exp(-x)))
+	4.Optimizer优化算法(鞍点问题)
+		SGD(随机梯度下降,会陷入鞍点无法离开)
+			  x' = x - λ*L'(x))
+		Momentum(在鞍点处给一些惯性,让x有机会离开鞍点)
+			  v(t) = γ*v(t-1) + λ*L'(x)
+		      x' = x - v(t)
+		Nesterov accelerated gradient(假设v(t) = v(t-1),提前猜测下一个x的位置)
+			  v(t) = γ*v(t-1) + λ*L'(x-v(t-1))
+		      x' = x - v(t)
+		      *本质上相当于利用了x处的二阶导的信息,因而收敛加速
+		Adagrad(可能会因G(t,ii)过大而导致提前结束训练;可以调节学习速率λ)
+			  原理:
+			  	若f(x)取极值,则有f'(x) = 0
+			  	由Taylor公式可知:
+			  		f'(x) = f'(x0) + f"(x0)*(x - x0) = 0
+			  	  =>x = x0 - f'(x0)/f"(x0)
+			  xi' = xi - λ/sqrt(G(t-1,ii)+ε)*g(t-1,i)
+			  g(i) = L'(xi)
+			  G(t,ii) = Σ(g(t,i)^2)对应参数xi从第1轮到第t轮梯度的平方和,近似二阶导
+		RMSprop(避免了梯度下降过快)
+			  对Adagrad进行修正,认为每一轮的梯度具有不同的贡献率,因而不能简单的取平均
+			  xi' = xi - λ/sqrt(E(g^2,t-1))*g(t-1,i)
+			  E(g^2,t) = 0.9E(g^2,t-1) + 0.1g(t)
+		Adadelta(统一量纲,因为λ没有量纲;不需指定学习率)
+			  xi' = xi - sqrt(E(Δθ^2,t-2)+ε)/sqrt(E(g^2,t-1))*g(t-1,i)
+			  E(g^2,t) = γE(g^2,t-1) + (1-γ)g^2(t,i)
+			  E(Δθ^2,t) = γE(Δθ^2,t-1) + (1-γ)Δθ^2(t)
+		Adam = Adadelta + Moment
+			  mt = β1*m(t-1) + (1-β1)*g(t-1)
+			  	*对梯度的一阶矩估计,对E(g(t))的估计
+			  vt = β2*v(t-1) + (1-β2)*g^2(t)
+			  	*对梯度的二阶矩估计,对E(g^2(t))的估计
+			  m(t)~ = m(t)/(1-β1)
+			  v(t)~ = v(t)/(1-β2)
+			  	*通过校正使得m(t)、v(t)近似成为无偏估计
+			  	*β1 = 0.9  β2 = 0.999			  	
+			  x' = x - λ/sqrt(v(t-1)~ + ε)*m(t)~
+	5.正则化函数
+		L1 and L2
+			  L1(Lasso):Cost = ||w||^2
+			  L2(Ridge):Cost = ||w||
+		Early Stopping
+			  如果发现在某个epoch之后训练误差降低而测试误差增加
+			  则说明出现了过拟合,停止训练
+		Dropout
+			  在每个(或一定次数个)训练结束后,随机选择若干个节点,不更新他们的权重
+			  相当于这些节点被排除在网络之外,以此防止过拟合
+			  wij(t) = wij(t-1)
+		Weight Normalization(归一化)
+			  W' = γ*W/||W||
+		*Batch Normalization(防止covariant shift)
+			  x~ = (x-μ)/sqrt(σ^2+ε)——其实就是标准化
+			  x* = γx~+β
+	4.Keras：太多了,不如直接看tutial
+		核心步骤是model.add(),核心概念是layer
+		model.add(Dense(1,input_dim = 3,kernal_initializer = 'glorot_normal',activation = 'sigmoid'))
+		model.add(Activation(name))#自定义激活函数
+		model.add(BatchNormalization())
+		model.compile(loss = 'binary_crossentropy',metrics = ['accuracy'],optimizer = 'Adam')
+		model.fit(X_train,y_train,verbose = 1,validation_data = (X_test,y_test),batch_size = 64,epochs = 10)
+		

@@ -1,0 +1,15 @@
+第三十一次课	Pygame
+	1.pygame.image.load().convert()
+	2.SCREEN = pygame.display.set_mode((x,y))
+	  pygame.display.set_caption('')
+	3.image.get_width()
+	  image.get_height()
+	4.FPS = 30
+	  FPSCLOCK = pygame.time.Clock()
+	5.for event in pygame.event.get():
+		if event.type == QUIT:
+			quit()
+	6.SCREEN.blit(image,[x_lefttop,y_lefttop])
+	7.pygame.display.update()
+	  FPSCLOCK.tick(FPS)
+	*详见Flappy_Bird.py

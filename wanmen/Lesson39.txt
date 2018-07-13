@@ -1,0 +1,65 @@
+第三十九次课	CNN应用
+	1.物体分类
+	2.物体检测
+		传统做法:
+			区域选择:窗口滑动
+			特征提取:SIFT HOG
+			分类器分类:SVM Adaboost
+		RCNN:(R--Region Proposal)——将特征提取用NN来完成
+			区域选择:Selective search算法
+			特征提取:CNN,将某一个fc层的输出作为分类器的输入
+			分类器分类:SVM
+		SPP(改进RCNN):——把分类也用NN来完成
+			fc层的向量对输入图片的大小具有实际的限制
+			SPP试图在fc之前将任意大小的图片都映射为统一尺寸的向量
+			分别用1x1,2x2,4x4的卷积核进行卷积
+			同时将原图像分为1、4、16个区域分别进行max pooling(沿着H W分别等分)
+			这样生成的向量恒为21维
+		FAST R-CNN:
+			追踪Region Proposal提出的特定区域(ROI),并将该区域划分
+			具体划分的份数可以根据实际情况设定
+			与以往的pooling不同之处在于
+				不再采用扫描的方法,而是人为将区域等分,从而保证输出向量长度恒定
+			多任务Loss = Lcal(ln(p)) + Lloc(smooth(x))
+		FASTER R-CNN(将区域选择也NN化):
+			1.将原始图片缩放为指定比例
+			2.通过13个conv、13个Relu、4个pooling得到Feature map
+			3.设定3个尺寸和3类比例,生成9种检测框(anchors)
+			4.用每一个检测框扫描feature map,利用softmax判定当前区域是否是ROI
+			  如果是,记录下anchors和对应的边界偏移量
+			5.利用bbox reg对边界进行修正
+			  *IoU：(ground truth ∩ proposal)/(ground truth ∪ proposal)
+			   Anchors：
+			   		IoU > 0.7	正Anchors
+			   		IoU < 0.3   负Anchors
+			   		其余Anchors不参与训练
+			*整个RPN网络的Loss Function包含Softmax分类损失和Bound回归损失
+			6.将2-4相结合,就得到了proposal region
+			7.将每一个proposal region对应的feature map数据传入FC,依次进行判定
+		YOLO:
+			使用24个conv+2个fc输出长度为7x7x(2*5+20)的向量
+			抛弃了Region Proposal,转而直接使用回归得到三类参数:
+				bbox定位参数、分类概率、框内含有Object的概率
+			使用非极大值抑制算法得到最终的结果(框)
+		SSD:
+			在YOLO基础上使用了Anchor的概念
+	*如何确定到底需要多少个卷积层？
+	 每个卷积层到底需要多少个卷积核(或者说需要生成多少个Channel)？
+	 难道就是靠经验？
+	3.代码实战
+		model = Sequential()
+		model.add(Conv2D(output_channels,kernal_size,input_shape,activation))
+			kernal_size为一个整数,默认kernal为正方形
+			只有第一个layer需要定义input_shape
+		model.add(MaxPooling2D(pool_size))
+			poolsize = (k,k)
+		model.add(Dropout(prob))
+		model.add(Flatten())
+		model.add(Dense(output_channels,activation))
+		model.compile(loss,optimizer,metrics)
+		model.fit(X_train,y_train,validation = (X_test,y_test),epochs,batch_size)
+		scores = model.evaluate(X_test,y_test)
+		model.predict(x)
+	
+		
+	 

@@ -1,0 +1,38 @@
+import pygame
+from pygame.locals import *
+from sys import exit
+BACKGROUND_PATH = 'D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\background-black.png'
+PLAYER_PATH = ['D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\redbird-downflap.png'\
+'D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\redbird-midflap.png'\
+'D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\redbird-upflap.png']
+PIPE_PATH = 'D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\pipe-green.png'
+BASE_PATH = 'D:\file\selflearning\ml\Week3_FlappyBird\assets\sprites\base.png'
+
+SCREEN_HEIGHT = 512
+SCREEN_WIDTH = 256
+IMAGE = {}
+
+pygame.init()
+SCREEN = pygame.display.set_mode((SCREEN_HEIGHT,SCREEN_WIDTH))
+pygame.display.set_caption('Sakura')
+
+IMAGE['BG'] = pygame.image.load(BACKGROUND_PATH).convert()
+IMAGE['BASE'] = pygame.image.load(BASE_PATH).convert_alpha()
+IMAGE['PLAYER'] = [pygame.image.load(PLAYER_PATH[0]).convert_alpha(),
+				   pygame.image.load(PLAYER_PATH[1]).convert_alpha(),
+				   pygame.image.load(PLAYER_PATH[2]).convert_alpha()]
+IMAGE['PIPE'] = [pygame.transform.rotate(pygame.image.load(PIPE_PATH).convert_alpha(),180),
+				 pygame.image.load(PIPE_PATH).convert_alpha()]
+PIPE_HEIGHT = IMAGE['PIPE'][0].get_height()
+PIPE_WIDTH = IMAGE['PIPE'][0].get_width()
+
+while(true):
+	for event in pygame.event.get():
+		if event.type == QUIT:
+			quit()
+	SCREEN.blit(IMAGE['BG'],[0,0])
+	SCREEN.blit(IMAGE['BASE'],[0,0])
+	SCREEN.blit(IMAGE['PIPE'][0],[0,0])
+	SCREEN.blit(IMAGE['PIPE'][1],[0,SCREEN_HEIGHT-PIPE_HEIGHT])
+	
+	SCREEN.update()

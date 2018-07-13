@@ -1,0 +1,73 @@
+第二十六次课 聚类
+	1.距离
+		Minkowski距离	dist(x,y) = (Σ|xi-yi|^p)^1/p
+		欧氏距离		p=2的闵科夫斯基距离
+		曼哈顿距离		p=1的闵科夫斯基距离
+		余弦夹角		cos(x,y) = Σxi*yi/(Σxi^2*Σyi^2)^0.5=<AB,AC>/(|AB|*|AC|)
+		相关系数		corr(x,y) = 
+						Σ(xi-mean(x))*(yi-mean(y))/
+						(Σ(xi-mean(x))^2+Σ(yi-mean(y))^2)^0.5
+		*在计算前应当首先进行归一化
+	2.划分聚类——k-means算法
+		i)初始生成k个聚类中心(也可以从样本中随机选取k个作为聚类中心)
+		ii)根据样本与聚类中心的距离将样本归入最近的聚类中心代表的类别
+		iii)修正每个类的中心(就是取该类别中所有样本的均值)
+		iv)重复1-3,直至准则函数收敛,聚类中心基本不发生变化
+	  优点:
+	  	简单、复杂度低、生成的类紧密度高
+	  缺点:
+	  	k的确定、初始值(k-means++)、非球形簇效果差、对噪声和异常点敏感(k-median)
+	  k-means++(优化初始质心的选择):
+	  	i)随机选择一个样本作为C1
+	  	ii)计算剩余样本到C1的距离Di
+	  	iii)计算Di/ΣDj作为每个点被选取为质心的概率,并由此选择第二个
+	  	iv)重新计算距离 Di^2 = min(||xi-Cj||^2)
+	  	v)重复直至k个中心被选取完毕
+	  	vi)按照k-means计算即可
+	3.层次聚类(孔令才老师讲过的课)——Agglomerative clustering算法
+		每次都将距离最近的两个类合并为新类,直到合并出指定个数个类
+		*类之间的距离计算:
+			i)最小距离——两个类之间的最短距离——单链接single-linkage
+			ii)最大距离——两个类之间的最长距离——全链接complete-linkage
+			iii)平均距离——两个类之间所有样本的距离之和求平均——均链接average-linkage
+		优点:
+			不受形状的限制、可以发现类之间的层次关系、不用指定簇的数目(但是需要一个参数来决定什么时候停止)
+		缺点:
+			计算复杂度高、噪声影响较大、不适合大样本
+	4.密度聚类——density based clustering
+		只要一个区域中点的密度大于某个阈值,就将其加到与之相近的聚类中去
+		DBSCAN:
+			样本集D、阈值MinPts(4为佳)、ε-邻域(ε可由k-dist graph得到)、核心对象
+			密度直达、密度可达、密度相连
+			i)找到一个核心对象(若在样本x的ε邻域中存在至少MinPts个样本,则称x为核心对象)
+			ii)从x出发找到其密度直达的点x',再从这些点出发找到他们的密度直达点x"
+			   x"也称为x的密度可达点,直到无法找到新的点满足条件。这些点构成一个聚类簇C
+			iii)在剩余的点中再找一个核心对象,重复ii),直到找不到新的核心对象,聚类完成
+		*ε决定了搜索半径,MinPts决定了最低标准
+						  过大			     过小			建议值
+			ε		   类会被合并       聚类的延伸性差		  4
+			MinPts	  找不到核心对象     容易纳入噪声		0.05左右
+		*可以采用尝试法对每个问题进行尝试,没有普遍的最优值
+		优点:
+			有效识别噪声、不需要事先指定k、不受形状限制
+		缺点:
+			对MinPts和ε敏感、稀疏数据集效果较差
+	5.基于模型的聚类——高斯混合模型聚类GMM
+		初始选取k个聚类中心,生成k个以聚类中心为中心的高斯分布模型
+	  =>计算每个样本属于每个模型的概率,取概率最大的模型(类)
+	  =>依次计算所有样本,聚类结束
+	    优点:
+	    	GMM以概率形式表达聚类结果,k-means可以认为是特殊的GMM(即样本属于某一类的概率为1,其余均为0)
+	    	GMM有良好的统计解释,具有的混合特征适用于某些情境(如新闻话题分类等)
+	    	不受形状和噪声影响
+	    缺点:
+	    	复杂度高、可扩展性差
+	6.代码实现
+		from sklearn import cluster,mixture
+		from sklearn.neighbors import kneighbors_graph
+	  	cluster.KMeans(n_clusters = n,ramdom_state = 2018)
+	  	cluster.DBSCAN(eps = epsilon, min_samples = MinPts)
+	  	cluster.AgglomerativeClustering(linkage = 'average',affinity = 'euclidean'
+	  									n_clusters = 10, connectivity = connectivity)
+	  	mixture.GaussianMixture(n_components = 10)
+	  	cluster.SpectralClustering(n_clusters = 10,affinity = 'nearest_neighbors')

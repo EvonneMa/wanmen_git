@@ -1,0 +1,108 @@
+第三十六次课	TensorFlow
+	1.定义节点和运算+tf.Session().run()
+	2.可视化:
+		writer = tf.summary.FileWriter(dir,sess.graph)
+	3.关闭
+		writer.close()
+		sess.close()
+	4.Tensor Shape
+		sess = tf.InteractiveSession() #方便交互,只有在该模式下才能使用eval()
+		x = tf.constant([[1,2,3,4],[5,6,7,8]])
+		x.eval() #将x转换成np.ndarray的格式并输出
+		tf.size(x).eval() #元素个数
+		tf.shape(x).eval() #矩阵维度
+		tf.rank(x).eval() #返回张量的阶数
+		tf.reshape(x,[rows,cols]).eval() #reshape
+		tf.squeeze(x).eval() #将维度是1的那一维压缩掉(因为留着也是浪费,相当于降维)
+		tf.expand_dims(x,pos) #在指定位置增加一维
+	5.Tensor Operation
+		tf.matmul(x,y) #矩阵乘法
+		tf.add(x,y) #矩阵加法
+		tf.matrix_inverse(x) #y的逆,元素必须为float
+		tf.transpose(x) #矩阵的转置
+		tf.matrix_determinant(x) #矩阵的行列式
+		tf.matrix_solve(A,b) #求解Ax=b
+		*tf似乎不接受一阶张量(个人感觉)
+		tf.reduce_FunctionName(x,reduction_indices = k) #矩阵降维
+			#用指定的形式来降低维度,目标维度为k,不指定默认压缩至常数
+			 就像MPI里面一样
+			reduce_max
+			reduce_min
+			reduce_prod
+			reduce_mean
+			reduce_all #对指定维度的所有数据进行&操作
+			reduce_any #对指定维度的所有数据进行|操作
+	6.Tensor Slicing
+		tf.slice(x,[r1,c1],[r2,c2]) #以矩阵x中x[r1,c1]为起点,切取r2*c2的字块
+		tf.split(x,[a1,a2...],dim) #沿指定维度将x切分为若干低阶子张量
+									分别含有a1,a2,...个元素
+									且满足Σai = 指定维度的元素个数
+		  返回一个list,对向量、矩阵及高阶张量均适用
+		tf.pad(x,paddings,mode) #如同openCV一样,用于扩大边界,常见于CNN
+		  *paddings是一个n*2的矩阵,n为矩阵x的阶数(一般多用2阶矩阵)
+		  *根据paddings的第i个元素[xi,yi]
+		  *在该维度第一个元素之前添加xi个元素
+		  *在该维度最后一个元素之后追加yi个元素
+		  *添加方式由mode决定
+		  *mode:
+		  	'CONSTANT':添加元素均为0
+		  	'REFLECT':以边界元素(不含)为对称轴补充元素 abcd->dcbabcd
+		  	'SYMMETRIC':以边界元素(含)为对称轴补充元素 abcd->dcbaabcd
+			当选择后两个模式时,xi(yi)应分别不大于n-1和n			
+		  *一般CNN里的矩阵多为2阶,故paddings多为[[],[]]的形式
+		tf.concat([a,b],axis) #合并张量
+		  *将b中维度axis上的元素直接append到a中相应维度元素之后,其他维度不变
+		  *[a1,a2,...,an] [b1,b2,...,bm] -> [a1,...,an,b1,...,bm]
+		  *除了axis维度,张量的阶数和每一阶的size都必须相同
+	7.Tensor Sequences
+		tf.argmax/argmin(x,axis) #返回x的维度axis中最大(小)元素的索引
+								  若有相同元素取较小的索引
+		tf.unique(x)[0] #返回升序排列的非重复元素个数res
+		tf.unique(x)[1] #返回x中每个元素在res中的索引
+		tf.where(x) #返回哪些位置的元素为True
+	*对高阶张量的一点理解
+		设有一n阶张量,如果要对第i阶进行降维操作,假设第i阶具有k个i-1阶张量
+		则将这k个i-1阶张量的每一组对应元素按照给定的规则进行集成合规并
+		最终生成一个i-1阶张量,从而达到降维的目的
+	8.Graph(不推荐多Graph)
+		graph = tf.Graph() #定义一张图,我们的Tensor和Flow就在这张Graph上运行
+		with graph.as_default():
+			with tf.name_scope('name1'):
+				'''
+				1.如果定义了graph,就必须加上 with graph.as_default():
+				2.使用tf.name_scope()可以帮助清晰划分不同用途的变量
+				'''
+			with tf.name_scope('name2')
+	9.sess.run(fetches,feed_dict = None)
+		fetches:可以为tensor(返回tensor的值),也可以为Tensor Object(返回none)
+		feed_dict:改写tensor中的值,常用于给模型赋x,y的值
+	10.tf.Session、tf.constant、tf.Variable、tf.placeholder
+		sess = tf.Session()
+		
+		a = tf.constant(100,name = '') #不推荐使用过多的constant,占资源
+		
+		b = tf.Variable(tf.random_normal([2,2]), name= '') #定义变量,此时b只是个节点
+		init = tf.variables_initializer([b], name= '') #初始化
+		sess.run(init) #完成初始化,此时b才被真正赋了值
+		*tf.Variable(trainable = True) #表示该变量是否需要被模型进行训练
+		
+		c = tf.placeholder(tf.int32,shape = [2,2],name = '')
+			#通常用于原始数据,先占用一些位置,具体数据等运行时再赋值,shape可以为None
+		sess.run(c,feed_dict = {c:[[1,2],[3,4]]})
+			#运行时必须进行赋值,但是使用完数据后c立刻恢复成空值,等待下一次赋值
+	*TensorFlow = Tensor + Flow
+	11.softmax(代替logistic函数计算概率的一种方式)
+			x = [x1,x2,...,xn]
+	   	    softmax_x = [e^x1/Σe^xi,...,e^xn/Σe^xi]
+	   	    可以很方便的进行更新:
+	   	    	假设Loss函数为softmax的cross_entropy,则对第i个样本有
+	   	    		Loss'(xi) = softmax(xi) - 1
+	   	    	即只要将算出来的概率的向量对应的真正结果的那一维减1
+	   cross_entropy(比平方和能够更好地衡量距离)
+	   		y:label
+	   		y':y_predict = f(x)
+	   		cross_entropy = y*ln(y')
+	   		可以避免梯度消散、能够使输出的分布和样本分布尽可能的一致
+	12.tf.nn——神经网络
+	   
+	
