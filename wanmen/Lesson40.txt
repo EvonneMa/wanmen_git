@@ -9,3 +9,15 @@
 	3.执行引擎
 	4.自动梯度计算
 	5.选择目标场景的样本进行训练
+	6.训练技巧
+		简单样本验证网络拟合能力、收敛性、梯度流动性
+		典型样本+边界样本+data augmentation
+		bias variance tradeoff
+		weight init matters
+		learning rate
+		batch size matters
+		BN works in deep network(梯度弥散和爆炸——通过ReLu和Batch Normalization解决)
+		loss function+multi-task,usually more stable
+		visualize middle layer activations
+	7.优化技巧
+		

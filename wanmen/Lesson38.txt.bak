@@ -35,6 +35,6 @@
 		Inception-net用1x1代替全连接	
 		Residual-net建立反向传播高速路
 		Dense-net在任意两层之间都建立高速路,防止网络过深使得浅层网络学习结果被遗忘
-		
+	
 		
 	
