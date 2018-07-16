@@ -4,22 +4,24 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("../MNIST-data",one_hot = True)
 def pool(img,k = 2):
 	return tf.nn.max_pool(img,ksize = [1,k,k,1],strides = [1,k,k,1],padding = 'SAME')
+def conv(_x,_w,_b):
+	return tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(_x,_w,strides = [1,1,1,1],padding = 'SAME'),_b))
 def conv_net(_x,_wb,_dropout):
     #layer1
     _x = tf.reshape(_x,[-1,28,28,1])
-    conv1 = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(_x,_wb['w1'],strides = [1,1,1,1],padding = 'SAME'),_wb['b1']))
+    conv1 = conv(_x,_wb['w1'],_wb['b1'])
     #conv2 = pool(conv2,k = 2)
     conv1 = tf.nn.dropout(conv1,_dropout)
     #layer2
-    conv2 = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(conv1,_wb['w2'],strides = [1,1,1,1],padding = 'SAME'),_wb['b2']))
+    conv2 = conv(conv1,_wb['w2'],_wb['b2'])
     conv2 = pool(conv2,k = 2)
     conv2 = tf.nn.dropout(conv2,_dropout)
     #layer3
-    conv3 = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(conv2,_wb['w3'],strides = [1,1,1,1],padding = 'SAME'),_wb['b3']))
+    conv3 = conv(conv2,_wb['w3'],_wb['b3'])
     #conv2 = pool(conv2,k = 2)
     conv3 = tf.nn.dropout(conv3,_dropout)
     #layer4
-    conv4 = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(conv3,_wb['w4'],strides = [1,1,1,1],padding = 'SAME'),_wb['b4']))
+    conv4 = conv(conv3,_wb['w4'],_wb['b4'])
     conv4 = pool(conv4,k = 2)
     conv4 = tf.nn.dropout(conv4,_dropout)
     #layer5
@@ -44,7 +46,8 @@ def main():
 	y = tf.placeholder(tf.float32,[None,n_classes])
 	droprate = tf.placeholder(tf.float32)
 	#wb
-	wb = {'w1':tf.Variable(tf.random_normal([3,3,1,32])),
+	wb = {
+	'w1':tf.Variable(tf.random_normal([3,3,1,32])),
 	'w2':tf.Variable(tf.random_normal([3,3,32,32])),
 	'w3':tf.Variable(tf.random_normal([3,3,32,64])),
 	'w4':tf.Variable(tf.random_normal([3,3,64,64])),
