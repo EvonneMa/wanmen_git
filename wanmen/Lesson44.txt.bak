@@ -1,0 +1,39 @@
+第四十四次课：	词嵌入表示(如何将词映射为向量)
+	1.神经语言模型
+		不单单使用OHE,而是在OHE基础上再进行一次fc,表面上相当于进行了一次自定义编码。
+		建立一个查询表,将每一个单词映射成一个索引,再用索引去表内查询,得到实际编码
+		优点：对词向量平滑;与词频相关性很小
+	2.RNN
+		并不会像N元模型那样需要设定N,RNN可以学习所有之前的单词给出的信息。
+		RNN会出现梯度消失,因此可以用LSTM进行解决
+		共享参数使得参数数量大大降低,但是收敛效果不甚理想
+	3.词嵌入
+		通过三层的标准全链接神经网络来训练词向量
+		输入和输出都是词或句子的OHE(具体使用词还是句子根据CBOW或者Skip-gram来决定)
+		最终有用的是输入层到隐藏层的权重张量,每一个词到每一个隐藏层神经元的权重构成了该词的词向量。
+		*类似因子分析,认为每一个词都有一定数量的属性,每个属性配以不同的权重,加权平均的结果就是每一个词
+		CBOW：
+			选择目标单词的相邻单词(如范围为的相邻单词),将其向量求和作为目标单词的向量
+		Skip-gram:
+			与CBOW相反,用目标单词预测相邻的单词
+		哈夫曼树：
+			最小带权路径
+		原理：
+		    CBOW:
+			首先计算X(w,t),从根节点开始不断进行二分类(Hierarchical Softmax),直到到达叶节点
+			每个非叶节点都含有参数theta,是需要学习的参数。
+			计算每个词出现的概率,取最高的那个就行。
+		    Skip-gram：
+			计算每一个词出现的情况下相邻词出现的概率(是个连乘),取使得相邻词出现概率最高的那个词作为目标词
+		负采样：
+			由于词的数量比较多,因此生成一个负样本集减少计算量。负样本集就是总词汇量的子集
+	4.CTC技术(基于RNN的语音识别技术目前看来还很不成熟,多利用一些传统采样如音素等生成语句,同时利用基于RNN的语言模型进行评估,最终生成最好的结果。)
+	5.文本生成与分析
+		RNN在处理文本方面较为擅长。
+	6.机器翻译：
+		注意力机制：对编码器(RNN或LSTM等)的每一层输出都要与解码器的第i个输出做匹配,利用softmax得到权重进行加权平均,将得到的向量也作为输入的一部分用于解码器第i+1个输出的计算
+*learning to generate reviews and discovering sentiment
+ neural machine translation by jointly learning to align and translate
+ recurrent models of visual attention
+ show and tell: a neural image caption generator
+ show attend and tell: neural image caption generation with visual attention

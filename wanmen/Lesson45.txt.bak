@@ -1,0 +1,14 @@
+第四十五次课	RNN的应用
+	1.CTC技术(基于RNN的语音识别技术目前看来还很不成熟,多利用一些传统采样如音素等生成语句,同时利用基于RNN的语言模型进行评估,最终生成最好的结果。)
+	2.文本生成与分析
+		RNN在处理文本方面较为擅长。
+	3.机器翻译：
+		注意力机制：对编码器(RNN或LSTM等)的每一层输出都要与解码器的第i个输出做匹配,利用softmax得到权重进行加权平均,将得到的向量也作为输入的一部分用于解码器第i+1个输出的计算
+*learning to generate reviews and discovering sentiment
+ neural machine translation by jointly learning to align and translate
+ recurrent models of visual attention
+ show and tell: a neural image caption generator
+ show attend and tell: neural image caption generation with visual attention
+ 	4.Word2Vec+RNN对红楼梦进行学习,模仿曹雪芹写作
+ 	5.keras:
+ 		TimeDistributed(layer):将layer应用到RNN的每个输出上(即return_sequences = True)

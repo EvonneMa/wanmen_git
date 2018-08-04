@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import time
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("../MNIST-data",one_hot = True)
 def pool(img,k = 2):
@@ -74,11 +75,13 @@ def main():
 		while(step*batch_size < training_iters):
 			batch_xs,batch_ys = mnist.train.next_batch(batch_size)
 			#print(step)
+			time1 = time.time()
 			sess.run(optimizer,feed_dict = {x:batch_xs,y:batch_ys,droprate:dropout})
+			delta = time.time() - time1
 			if step % display_step == 0:
 				acc = sess.run(accuracy,feed_dict = {x:batch_xs,y:batch_ys,droprate:1})
 				lost = sess.run(cost,feed_dict = {x:batch_xs,y:batch_ys,droprate:1})
-				print(f'epoch = {i},iter = {step*batch_size},acc = {acc},lost = {lost}')
+				print(f'epoch = {i},iter = {step*batch_size},acc = {acc},lost = {lost},time = {delta}')
 			step += 1
 		print(f'final acc = {sess.run(accuracy,feed_dict = {x:mnist.test.images[:512],y:mnist.test.labels[:512],droprate:1})}')
 if __name__ == '__main__':
