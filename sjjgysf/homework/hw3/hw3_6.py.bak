@@ -1,0 +1,10 @@
+# 汉诺塔
+def hnt(A,B,C,n):
+	if n == 1:
+		print('From '+A+' to '+C)
+		return
+	hnt(A,C,B,n-1)
+	print('From '+A+' to '+C)
+	hnt(B,A,C,n-1)
+	return
+hnt('A','B','C',3)

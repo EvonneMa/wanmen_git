@@ -1,0 +1,8 @@
+# 最长单词
+# 该单词可由更短的单词通过添加一个字母得到,如 a->ap->app->appl->apple
+def findLongestWord(s):
+	dic = {}
+	s.sort() #很有意义的排序
+	for ele in s:
+		
+	

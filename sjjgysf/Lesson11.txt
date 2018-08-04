@@ -1,0 +1,18 @@
+第十一次课	堆
+	1.一个堆是一棵有序完全二叉树
+	2.一棵完全树可以自顶向下逐层填满一个数组：对于节点i,其父节点索引为(i-1)//2,其子节点索引分别为(2*i+1、2*i+2)
+	3.父节点的值永远不小于子节点的值,因此可以时刻返回最大值
+	4.构建一个堆：O(n),每放入一个数,递归地进行父子互换操作
+	  插入一个数：O(lgn),先放在最后,然后递归地进行父子互换操作
+	  查找最大值：O(1)
+	  删除最大值：O(lgn),用最后一个元素去填补堆顶,然后递归地进行父子互换操作
+	5.import heapq(默认是最小堆)
+		heapq.heappush(heap,item)：向heap添加一个元素
+		heapq.heappop(heap)：删除堆顶元素
+		heapq.heapify(list)：将list转化为一个堆
+		heapq.heappushpop(heap,item)：heappush和heappop的结合,比单独调用二者要快
+		heapq.nlargest(n,iterable,key)
+		heapq.nsmallest(n,iterable,key)：返回前n个最大/小值,如指定key则按照指定方式排序
+	6.堆的上溢和下溢(堆可以利用数组来实现)
+	  改变某个节点优先级
+	7.
